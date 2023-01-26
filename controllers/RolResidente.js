@@ -55,7 +55,7 @@ const updateRolResidente = (request, response) => {
     const { rol_descripcion } = request.body
     console.log('id is ' + rol_id)
 
-    db.query('update rol_residente set rol_id=$1, rol_descripcion=$2 where rol_id=$1', [rol_id, rol_descripcion], (error, results) => {
+    db.query('update rol_residente set rol_descripcion=$1 where rol_id=$2', [rol_descripcion, rol_id], (error, results) => {
         if (error) {
             throw error
         }
