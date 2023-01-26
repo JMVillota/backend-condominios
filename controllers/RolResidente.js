@@ -1,18 +1,18 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
 
-const createTipoUsuario = (request, response) => {
+const createRolResidente = (request, response) => {
     const { rol_id, rol_descripcion } = request.body
 
     db.query('INSERT INTO rol_residente (rol_id, rol_descripcion ) VALUES ($1, $2)', [rol_id, rol_descripcion], (error, results) => {
         if (error) {
             throw error
         }
-        response.status(201).send(`TipoUsuarioadded with ID: ${rol_id}`)
+        response.status(201).send(`Rol Residente added with ID: ${rol_id}`)
     })
 }
 
-const getTipoUserById = (request, response) => {
+const getRolResidenteById = (request, response) => {
 
     const rol_id = request.params.rol_id;
 
@@ -25,12 +25,8 @@ const getTipoUserById = (request, response) => {
     })
 }
 
-const getUsers = (request, response) => {
 
-
-}
-
-const getAllTipoUsers = (request, response) => {
+const getAllRolResidentes = (request, response) => {
 
     db.query('select * from rol_residente ', (error, results) => {
         if (error)
@@ -40,7 +36,7 @@ const getAllTipoUsers = (request, response) => {
 }
 
 
-const deleteTipoUsuario = (request, response) => {
+const deleteRolResidente = (request, response) => {
 
     const rol_id = request.params.rol_id;
 
@@ -54,7 +50,7 @@ const deleteTipoUsuario = (request, response) => {
 }
 
 
-const updateTipoUsuario = (request, response) => {
+const updateRolResidente = (request, response) => {
     const rol_id = request.params.rol_id;
     const { rol_descripcion } = request.body
     console.log('id is ' + rol_id)
@@ -63,16 +59,16 @@ const updateTipoUsuario = (request, response) => {
         if (error) {
             throw error
         }
-        response.status(200).send(`TipoUsuariomodified with ${rol_id}`)
+        response.status(200).send(`Rol Residente modified with ${rol_id}`)
     })
 }
 
 
 module.exports = {
-    createTipoUsuario,
-    getTipoUserById,
-    getAllTipoUsers,
-    deleteTipoUsuario,
-    updateTipoUsuario
+    createRolResidente,
+    getRolResidenteById,
+    getAllRolResidentes,
+    deleteRolResidente,
+    updateRolResidente
 
 }
