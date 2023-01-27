@@ -5,15 +5,16 @@ const {
     createPersona,
     // getPersona,
     getAllPersona,
-    // deletePersona,
+    deletePersona,
     // updatePersona
 } = require("../controllers/persona");
 
 router.post('/Persona', createPersona)
 // router.get('/Persona/:rol_id', getPersona)
 router.get('/Persona', getAllPersona)
-// router.delete('/Persona/:rol_id', deletePersona)
+router.delete('/Persona/:per_id', deletePersona)
 // router.put('/Persona/:rol_id', updatePersona)
+
 
 
 module.exports = router

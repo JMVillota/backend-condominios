@@ -8,16 +8,16 @@ const createPersona = (request, response) => {
         if (error) {
             throw error
         }
-        response.status(201).send(`Usuario externo added with ID: ${rol_id}`)
+        response.status(201).send(`Usuario externo added with ID: ${per_id}`)
     })
 }
 
 const getPersona = (request, response) => {
 
-    const rol_id = request.params.rol_id;
+    const per_id = request.params.per_id;
 
-    console.log('id is ' + rol_id)
-    db.query('SELECT * FROM rol_residente WHERE rol_id = $1', [rol_id], (error, results) => {
+    console.log('id is ' + per_id)
+    db.query('SELECT * FROM rol_residente WHERE per_id = $1', [per_id], (error, results) => {
         if (error) {
             throw error
         }
@@ -38,28 +38,28 @@ const getAllPersona = (request, response) => {
 
 const deletePersona = (request, response) => {
 
-    const rol_id = request.params.rol_id;
+    const per_id = request.params.per_id;
 
-    console.log('id is ' + rol_id)
+    console.log('id is ' + per_id)
 
-    db.query('delete from rol_residente where rol_id=$1', [rol_id], (error, results) => {
+    db.query('delete from persona where per_id=$1', [per_id], (error, results) => {
         if (error)
             throw error
-        response.status(200).send(`deleted id is ${rol_id}`)
+        response.status(200).send(`deleted id is ${per_id}`)
     })
 }
 
 
 const updatePersona = (request, response) => {
-    const rol_id = request.params.rol_id;
+    const per_id = request.params.per_id;
     const { rol_descripcion } = request.body
-    console.log('id is ' + rol_id)
+    console.log('id is ' + per_id)
 
-    db.query('update rol_residente set rol_descripcion=$1 where rol_id=$2', [rol_descripcion, rol_id], (error, results) => {
+    db.query('update rol_residente set rol_descripcion=$1 where per_id=$2', [rol_descripcion, per_id], (error, results) => {
         if (error) {
             throw error
         }
-        response.status(200).send(`Rol Residente modified with ${rol_id}`)
+        response.status(200).send(`Rol Residente modified with ${per_id}`)
     })
 }
 
