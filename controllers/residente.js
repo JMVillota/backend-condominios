@@ -1,9 +1,12 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
+const { encrypt } = require("../Helpers/handleBcrypt")
 
 const createResidente = async (request, response) => {
 
     const { per_id, per_nombres, per_apellidos, res_correo, res_telefono, res_usuario, res_clave, rol_id, res_id } = request.body
+
+    const password = await encrypt(res_clave);
 
     db.query('select per_nombres, per_apellidos from persona WHERE per_id = $1', [per_id], (error, results) => {
         if (results.rows == "") {
@@ -11,7 +14,7 @@ const createResidente = async (request, response) => {
                 if (error) {
                     response.status(201).send(`{"status":"Error", "resp":"Algo salio mal "}`)
                 } else {
-                    db.query('INSERT INTO residente (res_correo, res_telefono, res_usuario, res_clave, rol_id, per_id, res_id) VALUES ($1, $2, $3, $4, $5, $6, $7)', [res_correo, res_telefono, res_usuario, res_clave, rol_id, per_id, res_id], (error, results) => {
+                    db.query('INSERT INTO residente (res_correo, res_telefono, res_usuario, res_clave, rol_id, per_id, res_id) VALUES ($1, $2, $3, $4, $5, $6, $7)', [res_correo, res_telefono, res_usuario, password, rol_id, per_id, res_id], (error, results) => {
                         if (error) {
                             response.status(201).send(`{"status":"Error", "resp":"Algo salio mal "}`)
                             // console
@@ -28,7 +31,7 @@ const createResidente = async (request, response) => {
         } else {
             db.query('select * from residente WHERE per_id = $1', [per_id], (error, results) => {
                 if (results.rows == "") {
-                    db.query('INSERT INTO residente (res_correo, res_telefono, res_usuario, res_clave, rol_id,per_id, res_id) VALUES ($1, $2, $3, $4, $5, $6, $7)', [res_correo, res_telefono, res_usuario, res_clave, rol_id, per_id, res_id], (error, results) => {
+                    db.query('INSERT INTO residente (res_correo, res_telefono, res_usuario, res_clave, rol_id,per_id, res_id) VALUES ($1, $2, $3, $4, $5, $6, $7)', [res_correo, res_telefono, res_usuario, password, rol_id, per_id, res_id], (error, results) => {
                         if (error) {
                             response.status(201).send(`{"status":"Error", "resp":"Algo salio mal "}`)
                         } else {
@@ -67,7 +70,7 @@ const getResidente = (request, response) => {
 
 
 const getAllResidente = (request, response) => {
-    db.query('select p.per_id, p.per_nombres,p.per_apellidos, rr.rol_descripcion, r.res_correo, r.res_telefono from residente r inner join persona  p on p.per_id=r.per_id inner join rol_residente rr on r.rol_id=rr.rol_id', (error, results) => {
+    db.query('select p.per_id, p.per_nombres,p.per_apellidos, rr.rol_descripcion, r.res_correo, r.res_telefono, r.res_clave from residente r inner join persona  p on p.per_id=r.per_id inner join rol_residente rr on r.rol_id=rr.rol_id', (error, results) => {
         if (error)
             throw error
         response.status(200).json(results.rows)

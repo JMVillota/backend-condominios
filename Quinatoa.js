@@ -10,7 +10,8 @@ app.use(express.json())
 
 // app.use("/api", require("./routes"))
 
-app.use(require('./routes/index'));
+app.use(require('./routes/auth'));
+app.use(require('./routes/residente'));
 
 const port = process.env.PORT || 3000
 
