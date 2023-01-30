@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node index",
-        "build": "node index"
+        "build": "netlify-lambda build index.js"
     },
     "keywords": [],
     "author": "",
