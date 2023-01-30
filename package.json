@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node index",
-        "build": "node index"
+        "start": "./node_modules/.bin/netlify-lambda node index",
+        "build": "./node_modules/.bin/netlify-lambda node index"
     },
     "keywords": [],
     "author": "",
