@@ -4,14 +4,15 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node index",
-        "build": "netlify-lambda build index.js"
+        "build": "netlify-lambda build express",
+        "start": "nodemon local.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^2.4.3",
+        "body-parser": "^1.20.1",
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
