@@ -137,11 +137,11 @@ router.delete('/tipo_servicio/:tser_id', deleteTipoServicio)
 router.put('/tipo_servicio/:tser_id', updateTipoServicio)
 
 // Servicio CRUD
-router.post('/.netlify/functions/servicio', createServicio)
-router.get('/.netlify/functions/servicio/:ser_id', getServicioById)
-router.get('/.netlify/functions/servicios', getAllServicios)
-router.delete('/.netlify/functions/servicio/:ser_id', deleteServicio)
-router.put('/.netlify/functions/servicio/:ser_id', updateServicio)
+router.post('/servicio', createServicio)
+router.get('/servicio/:ser_id', getServicioById)
+router.get('/servicios', getAllServicios)
+router.delete('/servicio/:ser_id', deleteServicio)
+router.put('/servicio/:ser_id', updateServicio)
 module.exports = router
 
 // Detalle Servicio CRUD
