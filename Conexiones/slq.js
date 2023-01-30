@@ -1,5 +1,7 @@
 // const pgPromise = require('pg-promise')
 const { Pool } = require('pg');
+const serverless = require('serverless-http');
+
 const pool = new Pool({
     host: 'bisaq08fekqkli8e9iw0-postgresql.services.clever-cloud.com',
     port: '5432',
@@ -12,3 +14,4 @@ const pool = new Pool({
 });
 
 exports.db = pool
+module.exports.handler = serverless(app);
