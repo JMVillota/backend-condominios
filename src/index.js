@@ -2,8 +2,8 @@
 const express = require("express")
 const cors = require("cors")
 const app = express()
-const dbConnectnoSql = require("./Conexiones/noSql")
-const dbConnectSql = require("./Conexiones/slq")
+const dbConnectnoSql = require("../Conexiones/noSql")
+const dbConnectSql = require("../Conexiones/slq")
 const serverless = require("serverless-http");
 
 
@@ -18,13 +18,12 @@ app.use(express.json())
 // const index_controller = require('./controllers/alquiler')
 
 //ROUTES
-app.use(require('./routes/index'));
+app.use(require('../routes/index'));
 
 //EJECUTION
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Tu server esta listo`)
-})
+app.use('/.netlify/functions/src', router); // path must route to lambda
+app.use('/', (req, res) => res.sendFile(path.join(__dirname, './dist/index.html')));
 
 module.exports = app;
 module.exports.handler = serverless(app);
