@@ -1,7 +1,7 @@
 //PACKAGES
 const express = require("express");
 const cors = require("cors");
-cont serveless = require('serverless-http');
+const serveless = require('serverless-http');
 const app = express();
 const dbConnectnoSql = require("./Conexiones/noSql");
 const dbConnectSql = require("./Conexiones/slq");
