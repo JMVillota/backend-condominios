@@ -1,6 +1,5 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
-const serverless = require('serverless-http');
 
 const getAllCuota = (request, response) => {
 

@@ -1,12 +1,11 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
-const serverless = require('serverless-http');
 
-const createBien = (request, response) => {
-    const { bien_descripcion, bien_costo } = request.body
+const createBien= (request, response) => {
+    const {bien_descripcion,bien_costo} = request.body
 
     db.query(`INSERT INTO bien (bien_descripcion,bien_costo) 
-    VALUES ($1,$2)`, [bien_descripcion, bien_costo], (error, results) => {
+    VALUES ($1,$2)`, [bien_descripcion,bien_costo], (error, results) => {
         if (error) {
             throw error
         }
@@ -36,14 +35,14 @@ const getBienById = (request, response) => {
 
 const updateBien = (request, response) => {
     const bien_id = request.params.bien_id;
-    const { bien_descripcion, bien_costo } = request.body
+    const {bien_descripcion,bien_costo} = request.body
     console.log('id is ' + bien_id)
 
-    db.query(`UPDATE bien SET bien_descripcion=$1, bien_costo=$2 WHERE bien_id=$3`, [bien_descripcion, bien_costo, bien_id], (error, results) => {
+    db.query(`UPDATE bien SET bien_descripcion=$1, bien_costo=$2 WHERE bien_id=$3`, [bien_descripcion,bien_costo,bien_id], (error, results) => {
         if (error) {
             throw error
         }
-
+        
         response.status(200).send(`Bien modified with ${bien_id}`)
     })
 }

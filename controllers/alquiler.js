@@ -1,12 +1,11 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
-const serverless = require('serverless-http');
 
-const createAlquiler = (request, response) => {
-    const { alq_fecha, alq_hora_inicio, res_id, bien_id, alq_hora_fin, alq_total } = request.body
+const createAlquiler= (request, response) => {
+    const {alq_fecha,alq_hora_inicio,res_id,bien_id,alq_hora_fin,alq_total} = request.body
 
     db.query(`INSERT INTO alquiler (alq_fecha,alq_hora_inicio,res_id,bien_id,alq_hora_fin,alq_total) 
-    VALUES ($1,$2,$3,$4,$5,$6)`, [alq_fecha, alq_hora_inicio, res_id, bien_id, alq_hora_fin, alq_total], (error, results) => {
+    VALUES ($1,$2,$3,$4,$5,$6)`, [alq_fecha,alq_hora_inicio,res_id,bien_id,alq_hora_fin,alq_total], (error, results) => {
         if (error) {
             throw error
         }
@@ -36,15 +35,15 @@ const getAlquilerById = (request, response) => {
 
 const updateAlquiler = (request, response) => {
     const alq_id = request.params.alq_id;
-    const { alq_fecha, alq_hora_inicio, res_id, bien_id, alq_hora_fin, alq_total } = request.body
+    const {alq_fecha,alq_hora_inicio,res_id,bien_id,alq_hora_fin,alq_total} = request.body
     console.log('id is ' + alq_id)
 
     db.query(`UPDATE alquiler SET alq_fecha=$1, alq_hora_inicio=$2, res_id=$3,bien_id=$4, alq_hora_fin=$5, alq_total=$6 
-    WHERE alq_id=$7`, [alq_fecha, alq_hora_inicio, res_id, bien_id, alq_hora_fin, alq_total, alq_id], (error, results) => {
+    WHERE alq_id=$7`, [alq_fecha,alq_hora_inicio,res_id,bien_id,alq_hora_fin,alq_total,alq_id], (error, results) => {
         if (error) {
             throw error
         }
-
+        
         response.status(200).send(`Alquiler modified with ${alq_id}`)
     })
 }
