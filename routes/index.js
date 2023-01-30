@@ -2,6 +2,8 @@ const { Router } = require("express");
 const router = Router()
 const checkAuth = require("../middleware/auth")
 const checkRoleAuth = require("../middleware/rol")
+const serverless = require('serverless-http');
+
 
 
 // Controladores Tipo Servicio
@@ -220,3 +222,5 @@ router.get('/usuarioExterno/:per_id', getUsuarioExterno)
 router.get('/usuarioExterno', getAllUsuarioExterno)
 router.delete('/usuarioExterno/:use_id', deleteUsuarioExterno)
 router.put('/usuarioExterno/:per_id', updateUsuarioExterno)
+
+module.exports.handler = serverless(app);
