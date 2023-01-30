@@ -23,7 +23,7 @@ app.use(require('./routes/index'));
 //EJECUTION
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log(`Tu server esta listo por el puerto ${port}`)
+    console.log(`Tu server esta listo`)
 })
 
 module.exports = app;
