@@ -1,9 +1,10 @@
 //PACKAGES
-const express = require("express")
-const cors = require("cors")
-const app = express()
-const dbConnectnoSql = require("./Conexiones/noSql")
-const dbConnectSql = require("./Conexiones/slq")
+const express = require("express");
+const cors = require("cors");
+cont serveless = require('serverless-http');
+const app = express();
+const dbConnectnoSql = require("./Conexiones/noSql");
+const dbConnectSql = require("./Conexiones/slq");
 
 //MIDDLEWARES
 app.use(cors())
@@ -25,3 +26,5 @@ const port = process.env.PORT || 3000
 app.listen(port, () => {
     console.log(`Tu server esta listo por el puerto ${port}`)
 })
+
+module.exports.handler = serveless(app);
