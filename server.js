@@ -4,7 +4,7 @@ const serverless = require('serverless-http');
 const app = express();
 const bodyParser = require('body-parser');
 
-
+app.use(bodyParser);
 app.use(require('./routes/index'));
 
 
