@@ -2,8 +2,8 @@
 const express = require("express")
 const cors = require("cors")
 const app = express()
-const dbConnectnoSql = require("./Conexiones/noSql")
-require("./Conexiones/slq")
+require("./Conexiones/noSql")
+const dbConnectSql = require("./Conexiones/slq")
 
 //MIDDLEWARES
 app.use(cors())
@@ -20,8 +20,10 @@ app.use(require('./routes/index'));
 
 //EJECUTION
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 
 app.listen(port, () => {
     console.log(`Tu server esta listo por el puerto ${port}`)
 })
+
+module.exports = app
