@@ -1,7 +1,5 @@
 // const pgPromise = require('pg-promise')
 const { Pool } = require('pg');
-
-
 const pool = new Pool({
     host: 'bisaq08fekqkli8e9iw0-postgresql.services.clever-cloud.com',
     port: '5432',
