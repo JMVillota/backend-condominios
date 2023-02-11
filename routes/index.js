@@ -268,7 +268,7 @@ router.put("/reporte/:rep_id", updateReporte)
 router.delete('/reporte/:rep_id', deleteReporte)
 
 //Reporte IMG
-router.get('/image', getImg)
+router.get('/images', getImg)
 router.get("/image/:id", getImgById)
 router.post("/image", upload.single("userImage"), createImg)
 router.put("/image/:id", upload.single("userImage"), updateImg)
