@@ -2,15 +2,13 @@
 const express = require("express")
 const cors = require("cors")
 const app = express()
-const dbConnectnoSql = require("./Conexiones/noSql")
-require("./Conexiones/slq")
+const sql = require("./Conexiones/slq")
+const nosql = require("./Conexiones/noSql")
 
 //MIDDLEWARES
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
-
 
 //CONTROLLER
 // const index_controller = require('./controllers/alquiler')
