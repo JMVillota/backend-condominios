@@ -2,7 +2,6 @@ const { Router } = require("express");
 const router = Router()
 const checkAuth = require("../middleware/auth")
 const checkRoleAuth = require("../middleware/rol")
-const Img = require("../models/img");
 const upload = require("../middleware/upload");
 //Controlador img
 const {
