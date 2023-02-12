@@ -3,7 +3,8 @@ const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const cors = require("cors")
 const app = express();
-const connectDB2 = require('./Conexiones/slq');
+const sql = require('./Conexiones/slq');
+const nosql = require('./Conexiones/noSql');
 
 //MIDDLEWARES
 app.use(express.urlencoded({ extended: false }));
