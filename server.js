@@ -1,11 +1,9 @@
-'use strict';
 const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const noSql = require("./Conexiones/noSql")
 const cors = require("cors")
 const app = express();
-require("./Conexiones/slq")
 
 //MIDDLEWARES
 app.use(cors())
