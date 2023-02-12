@@ -1,7 +1,6 @@
 const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
-const dbConnectnoSql = require("./Conexiones/noSql")
 const cors = require("cors")
 const app = express();
 
