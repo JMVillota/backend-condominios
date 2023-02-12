@@ -8,4 +8,4 @@ const connectDB = async() => {
         console.log(error)
     }
 }
-connectDB()
+exports.db = connectDB
