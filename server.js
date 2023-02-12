@@ -1,10 +1,13 @@
 const express = require('express');
 const serverless = require('serverless-http');
-const app = express();
 const bodyParser = require('body-parser');
-const noSql = require("./Conexiones/noSql")
+const dbConnectnoSql = require("./Conexiones/noSql")
+const cors = require("cors")
+const app = express();
 
-app.use(noSql);
+//MIDDLEWARES
+app.use(cors())
+app.use(express.json())
 app.use(bodyParser);
 app.use(require('./routes/index'));
 
