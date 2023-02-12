@@ -1,4 +1,16 @@
+const mongoose = require('mongoose');
 const Img = require("../models/img");
+
+const connectDB = async() => {
+    try {
+        await mongoose.connect('mongodb+srv://paquinatoau:MCwfpotYHIibxXnQ@cluster0.hwb4wuh.mongodb.net/dbCondominos?retryWrites=true&w=majority')
+        console.log('mongodb connection established');
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+connectDB()
 
 const {
     uploadToCloudinary,
@@ -6,8 +18,8 @@ const {
 } = require("../services/cloudinary");
 
 
-const getImg = (req, res) => {
-    const img = Img.find()
+const getImg = async(req, res) => {
+    const img = await Img.find()
     res.json(img)
 }
 

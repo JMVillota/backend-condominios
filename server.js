@@ -3,7 +3,6 @@ const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const cors = require("cors")
 const app = express();
-const connectDB = require('./Conexiones/noSql');
 const connectDB2 = require('./Conexiones/slq');
 
 //MIDDLEWARES

@@ -12,10 +12,6 @@ const {
     updateImg
 } = require("../controllers/img");
 
-const {
-    uploadToCloudinary,
-} = require("../services/cloudinary");
-
 // Controladores Tipo Servicio
 const {
     createTipoServicio,
