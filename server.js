@@ -7,7 +7,7 @@ const connectDB = require('./Conexiones/noSql');
 
 //MIDDLEWARES
 app.use(express.urlencoded({ extended: false }));
-
+connectDB();
 app.use(cors())
 app.use(express.json())
 app.use(bodyParser);
