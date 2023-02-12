@@ -1,6 +1,6 @@
 const express = require("express");
 const Img = require("../models/img");
-require("../Conexiones/noSql")
+const { db } = require("../Conexiones/noSql")
 
 const {
     uploadToCloudinary,
