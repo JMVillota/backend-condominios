@@ -7,6 +7,7 @@ const app = express();
 
 //MIDDLEWARES
 app.use(cors())
+app.use(dbConnectnoSql)
 app.use(express.json())
 app.use(bodyParser);
 app.use(require('./routes/index'));
