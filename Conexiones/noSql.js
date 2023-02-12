@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
 
-const DB_URI = "mongodb+srv://paquinatoau:MCwfpotYHIibxXnQ@cluster0.hwb4wuh.mongodb.net/dbCondominos?retryWrites=true&w=majority"
+const DB_URI = "mongodb://mongo:to1rG4ZcGIGBs4JevL6F@containers-us-west-57.railway.app:7023"
 
 
 const connectDB = async() => {

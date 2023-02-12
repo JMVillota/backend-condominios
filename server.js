@@ -12,6 +12,6 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser);
 app.use(require('./routes/index'));
-connectDB()
+
 
 module.exports.handler = serverless(app);
