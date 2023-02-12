@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require("cors")
 const app = express();
 const sql = require('./Conexiones/slq');
-const nosql = require('./Conexiones/noSql');
+//const nosql = require('./Conexiones/noSql');
 
 //MIDDLEWARES
 app.use(express.urlencoded({ extended: false }));
