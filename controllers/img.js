@@ -6,8 +6,8 @@ const {
 } = require("../services/cloudinary");
 
 
-const getImg = async(req, res) => {
-    const img = await Img.find()
+const getImg = (req, res) => {
+    const img = Img.find()
     res.json(img)
 }
 
