@@ -1,4 +1,3 @@
-const DB_URI = "mongodb+srv://paquinatoau:MCwfpotYHIibxXnQ@cluster0.hwb4wuh.mongodb.net/dbCondominos?retryWrites=true&w=majority"
 const mongoose = require('mongoose')
 mongoose.set("strictQuery", false);
 const connectDB = async() => {
