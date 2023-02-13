@@ -1,6 +1,5 @@
+const express = require("express");
 const Img = require("../models/img");
-
-
 const {
     uploadToCloudinary,
     removeFromCloudinary,

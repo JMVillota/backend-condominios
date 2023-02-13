@@ -2,6 +2,7 @@ const { Router } = require("express");
 const router = Router()
 const checkAuth = require("../middleware/auth")
 const checkRoleAuth = require("../middleware/rol")
+const Img = require("../models/img");
 const upload = require("../middleware/upload");
 //Controlador img
 const {
@@ -11,6 +12,10 @@ const {
     getImgById,
     updateImg
 } = require("../controllers/img");
+
+const {
+    uploadToCloudinary,
+} = require("../services/cloudinary");
 
 // Controladores Tipo Servicio
 const {
