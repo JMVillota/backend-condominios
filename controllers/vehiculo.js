@@ -1,11 +1,11 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
 
-const createVehiculo= (request, response) => {
-    const {veh_placa,veh_marca,veh_modelo,veh_color,res_id} = request.body
+const createVehiculo = (request, response) => {
+    const { veh_placa, veh_marca, veh_modelo, veh_color, res_id } = request.body
 
     db.query(`INSERT INTO seg_cond_vehiculo (veh_placa,veh_marca,veh_modelo,veh_color,res_id) 
-    VALUES ($1,$2,$3,$4,$5)`, [veh_placa,veh_marca,veh_modelo,veh_color,res_id], (error, results) => {
+    VALUES ($1,$2,$3,$4,$5)`, [veh_placa, veh_marca, veh_modelo, veh_color, res_id], (error, results) => {
         if (error) {
             throw error
         }
@@ -15,7 +15,7 @@ const createVehiculo= (request, response) => {
 
 const getAllVehiculo = (request, response) => {
 
-    db.query('SELECT * FROM seg_cond_vehiculo ', (error, results) => {
+    db.query('SELECT v.*, CONCAT (ssp.per_nombres,ssp.per_apellidos) as resi from seg_cond_vehiculo v inner join seg_sis_residente ssr on v.res_id=ssr.res_id inner join seg_sis_persona ssp on ssr.per_id=ssp.per_id', (error, results) => {
         if (error)
             throw error
         response.status(200).json(results.rows)
@@ -35,15 +35,15 @@ const getVehiculoById = (request, response) => {
 
 const updateVehiculo = (request, response) => {
     const veh_placa = request.params.veh_placa;
-    const {veh_marca,veh_modelo,veh_color,res_id} = request.body
+    const { veh_marca, veh_modelo, veh_color, res_id } = request.body
     console.log('id is ' + veh_placa)
 
-    db.query(`UPDATE seg_cond_vehiculo SET veh_marca=$1, veh_modelo=$2, veh_color=$3, res_id=$4 WHERE veh_placa=$5`, [veh_marca,veh_modelo,veh_color,res_id,veh_placa], (error, results) => {
+    db.query(`UPDATE seg_cond_vehiculo SET veh_marca=$1, veh_modelo=$2, veh_color=$3, res_id=$4 WHERE veh_placa=$5`, [veh_marca, veh_modelo, veh_color, res_id, veh_placa], (error, results) => {
         if (error) {
             throw error
             console.log(error)
         }
-        
+
         response.status(200).send(`Vehiculo modified with ${veh_placa}`)
     })
 }
