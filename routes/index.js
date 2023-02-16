@@ -285,7 +285,7 @@ router.delete("/image/:id", deleteImg)
 
 //Reporte CRUD
 router.get('/contacto', getAllContacto)
-router.get('/contacto/:rep_id', getContactoById)
+router.get('/contacto/:id', getContactoById)
 router.post('/contacto', createContacto)
-router.put("/contacto/:rep_id", updateContacto)
-router.delete('/contacto/:rep_id', deleteContacto)
+router.put("/contacto/:id", updateContacto)
+router.delete('/contacto/:id', deleteContacto)
