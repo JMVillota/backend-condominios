@@ -160,6 +160,15 @@ const {
     deleteReporte
 } = require("../controllers/reporte");
 
+
+const {
+    createContacto,
+    getAllContacto,
+    getContactoById,
+    updateContacto,
+    deleteContacto
+} = require("../controllers/contacto");
+
 // Tipo Servicio CRUD
 router.post('/tipo_servicio', createTipoServicio)
 router.get('/tipo_servicio/:tser_id', getTipoServicioById)
@@ -273,3 +282,10 @@ router.get("/image/:id", getImgById)
 router.post("/image", upload.single("userImage"), createImg)
 router.put("/image/:id", upload.single("userImage"), updateImg)
 router.delete("/image/:id", deleteImg)
+
+//Reporte CRUD
+router.get('/contacto', getAllContacto)
+router.get('/contacto/:rep_id', getContactoById)
+router.post('/contacto', createContacto)
+router.put("/contacto/:rep_id", updateContacto)
+router.delete('/contacto/:rep_id', deleteContacto)
