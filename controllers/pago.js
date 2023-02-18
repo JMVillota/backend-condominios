@@ -37,13 +37,13 @@ const createCuota = async(req, res) => {
     const { ali_descripcion, ali_costo, pagos } = req.body;
     try {
         // Insertar los datos en la tabla gest_adm_alicuota
-        const resultAli = await pool.query(
+        const resultAli = await db.query(
             'INSERT INTO gest_adm_alicuota (ali_descripcion, ali_costo) VALUES ($1, $2) RETURNING ali_id', [ali_descripcion, ali_costo]
         );
         const aliId = resultAli.rows[0].ali_id;
         // Insertar los datos en la tabla gest_adm_pago
         const values = pagos.map((pago) => [pago.pag_descripcion, pago.pag_costo, aliId]);
-        const resultPagos = await pool.query(
+        const resultPagos = await db.query(
             'INSERT INTO gest_adm_pago (pag_descripcion, pag_costo, ali_id) VALUES $1', [values]
         );
 
