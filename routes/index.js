@@ -169,6 +169,10 @@ const {
     deleteContacto
 } = require("../controllers/contacto");
 
+const {
+    createCuota
+} = require("../controllers/pago");
+
 // Tipo Servicio CRUD
 router.post('/tipo_servicio', createTipoServicio)
 router.get('/tipo_servicio/:tser_id', getTipoServicioById)
@@ -289,3 +293,6 @@ router.get('/contacto/:id', getContactoById)
 router.post('/contacto', createContacto)
 router.put("/contacto/:id", updateContacto)
 router.delete('/contacto/:id', deleteContacto)
+
+//Pago CRUD
+router.post('/cuota', createCuota)
