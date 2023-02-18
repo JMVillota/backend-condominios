@@ -19,6 +19,43 @@ const getAllDetallePago = (request, response) => {
     })
 }
 
+const createDetallePago = (req, res) => {
+    const dpag_fecha = req.body.dpag_fecha;
+    const res_id = req.body.res_id;
+    const ali_id = req.body.ali_id;
+
+    // Consulta para obtener el ali_costo de la tabla relacionada
+    const query = {
+        text: 'SELECT ali_costo FROM gest_adm_alicuota WHERE ali_id = $1',
+        values: [ali_id],
+    };
+
+    client.query(query, (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error al obtener el ali_costo');
+        } else {
+            const ali_costo = result.rows[0].ali_costo;
+
+            // Consulta para insertar los datos en la tabla cont_detalle_pago
+            const insertQuery = {
+                text: 'INSERT INTO cont_detalle_pago (dpag_fecha, res_id, ali_id, dpag_estado, total) VALUES ($1, $2, $3, $4, $5)',
+                values: [dpag_fecha, res_id, ali_id, false, ali_costo],
+            };
+
+            client.query(insertQuery, (err, result) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Error al insertar datos en la tabla cont_detalle_pago');
+                } else {
+                    res.status(200).send('Datos insertados correctamente');
+                }
+            });
+        }
+    });
+};
+
+
 const getAllAlicuota = (request, response) => {
 
     db.query('select * from gest_adm_alicuota order by ali_id', (error, results) => {
@@ -41,16 +78,6 @@ const getByCuota = (request, response) => {
     })
 }
 
-// const createCuota = (request, response) => {
-//     const { cuo_id, cuo_descripcion, cuo_costo } = request.body
-
-//     db.query('INSERT INTO gest_adm_pago (cuo_id, cuo_descripcion, cuo_costo) VALUES ($1, $2, $3)', [cuo_id, cuo_descripcion, cuo_costo], (error, results) => {
-//         if (error) {
-//             throw error
-//         }
-//         response.status(201).send(`Cuota added with ID: ${cuo_id}`)
-//     })
-// }
 const createCuota = async(req, res) => {
     const { ali_descripcion, ali_costo, pagos } = req.body;
     try {
@@ -70,11 +97,6 @@ const createCuota = async(req, res) => {
         res.status(500).send('Error al insertar los datos');
     }
 };
-
-
-
-
-
 
 const updateCuota = (request, response) => {
     const cuo_id = request.params.cuo_id;
@@ -109,6 +131,7 @@ module.exports = {
     createCuota,
     updateCuota,
     deleteCuota,
-    getAllDetallePago
+    getAllDetallePago,
+    createDetallePago
 
 }
