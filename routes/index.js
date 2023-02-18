@@ -170,7 +170,9 @@ const {
 } = require("../controllers/contacto");
 
 const {
-    createCuota
+    createCuota,
+    getAllAlicuota,
+    getAllCuota
 } = require("../controllers/pago");
 
 // Tipo Servicio CRUD
@@ -296,3 +298,5 @@ router.delete('/contacto/:id', deleteContacto)
 
 //Pago CRUD
 router.post('/cuota', createCuota)
+router.get('/alicuota', getAllAlicuota)
+router.get('/cuota', getAllCuota)

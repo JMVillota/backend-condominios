@@ -3,7 +3,16 @@ const { db } = require("../Conexiones/slq")
 
 const getAllCuota = (request, response) => {
 
-    db.query('select * from gest_adm_pago order by cuo_id', (error, results) => {
+    db.query('select * from gest_adm_pago order by pag_id', (error, results) => {
+        if (error)
+            throw error
+        response.status(200).json(results.rows)
+    })
+}
+
+const getAllAlicuota = (request, response) => {
+
+    db.query('select * from gest_adm_alicuota order by ali_id', (error, results) => {
         if (error)
             throw error
         response.status(200).json(results.rows)
@@ -86,6 +95,7 @@ const deleteCuota = (request, response) => {
 
 module.exports = {
     getAllCuota,
+    getAllAlicuota,
     getByCuota,
     createCuota,
     updateCuota,
