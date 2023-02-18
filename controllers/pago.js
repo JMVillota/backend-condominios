@@ -30,7 +30,7 @@ const createDetallePago = (req, res) => {
         values: [ali_id],
     };
 
-    client.query(query, (err, result) => {
+    db.query(query, (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error al obtener el ali_costo');
@@ -43,7 +43,7 @@ const createDetallePago = (req, res) => {
                 values: [dpag_fecha, res_id, ali_id, false, ali_costo],
             };
 
-            client.query(insertQuery, (err, result) => {
+            db.query(insertQuery, (err, result) => {
                 if (err) {
                     console.error(err);
                     res.status(500).send('Error al insertar datos en la tabla cont_detalle_pago');
