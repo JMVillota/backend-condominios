@@ -10,6 +10,15 @@ const getAllCuota = (request, response) => {
     })
 }
 
+const getAllDetallePago = (request, response) => {
+
+    db.query('SELECT cdp.*, per.per_nombres, per.per_apellidos, al.ali_descripcion, al.ali_costo FROM cont_detalle_pago cdp INNER JOIN seg_sis_residente res ON cdp.res_id = res.res_id INNER JOIN seg_sis_persona per ON res.per_id = per.per_id INNER JOIN gest_adm_alicuota al ON cdp.ali_id = al.ali_id', (error, results) => {
+        if (error)
+            throw error
+        response.status(200).json(results.rows)
+    })
+}
+
 const getAllAlicuota = (request, response) => {
 
     db.query('select * from gest_adm_alicuota order by ali_id', (error, results) => {
@@ -99,6 +108,7 @@ module.exports = {
     getByCuota,
     createCuota,
     updateCuota,
-    deleteCuota
+    deleteCuota,
+    getAllDetallePago
 
 }
