@@ -3,7 +3,7 @@ const { db } = require("../Conexiones/slq")
 
 const getAllCuota = (request, response) => {
 
-    db.query('select * from gest_adm_pago', (error, results) => {
+    db.query('select pag_id, pag_descripcion, pag_costo, ali_descripcion from gest_adm_pago p INNER JOIN gest_adm_alicuota a on a.ali_id = p.ali_id', (error, results) => {
         if (error)
             throw error
         response.status(200).json(results.rows)
