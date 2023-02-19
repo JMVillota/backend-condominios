@@ -98,18 +98,39 @@ const createCuota = async(req, res) => {
     }
 };
 
-const updateCuota = (request, response) => {
-    const cuo_id = request.params.cuo_id;
-    const { cuo_descripcion, cuo_costo } = request.body
-    console.log('id' + cuo_id)
-
-    db.query('update gest_adm_pago set cuo_descripcion=$1, cuo_costo=$2 where cuo_id=$3', [cuo_descripcion, cuo_costo, cuo_id], (error, results) => {
-        if (error) {
-            throw error
+const updateCuota = async(req, res) => {
+    const ali_id = request.params.ali_id;
+    const { ali_descripcion, ali_costo, pagos } = req.body;
+    try {
+        // Insertar los datos en la tabla gest_adm_alicuota
+        const resultAli = await db.query(
+            'update INTO gest_adm_alicuota set ali_descripcion=$1, ali_costo=$2 where ali_id=$3', [ali_descripcion, ali_costo, ali_id]
+        );
+        // Insertar en gest_adm_pago
+        for (let pago of pagos) {
+            await db.query('update gest_adm_pago set pag_descripcion=$1, pag_costo=$2 where ali_id=$3', [pago.pag_descripcion, pago.pag_costo, ali_id]);
         }
-        response.status(200).send(`Cuota modified with ${cuo_id}`)
-    })
-}
+
+        res.status(200).send('Datos insertados correctamente');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al insertar los datos');
+    }
+};
+
+
+const getPagoByaliID = async(req, res) => {
+    const ali_id = req.params.ali_id;
+    try {
+        const query = `SELECT * FROM gest_adm_alicuota JOIN gest_adm_pago ON gest_adm_alicuota.ali_id = gest_adm_pago.ali_id WHERE gest_adm_alicuota.ali_id = $1`;
+        const { rows } = await db.query(query, [ali_id]);
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al obtener los datos' });
+    }
+};
+
 
 const deleteCuota = (request, response) => {
 
@@ -132,6 +153,6 @@ module.exports = {
     updateCuota,
     deleteCuota,
     getAllDetallePago,
-    createDetallePago
-
+    createDetallePago,
+    getPagoByaliID
 }
