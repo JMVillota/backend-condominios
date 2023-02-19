@@ -98,25 +98,37 @@ const createCuota = async(req, res) => {
     }
 };
 
-const updateCuota = async(req, res) => {
-    const ali_id = request.params.ali_id;
-    const { ali_descripcion, ali_costo, pagos } = req.body;
+const updatePago = async(req, res) => {
+    const pag_id = req.params.pag_id;
+    const { pag_descripcion, pag_costo } = req.body;
     try {
-        // Insertar los datos en la tabla gest_adm_alicuota
-        const resultAli = await db.query(
-            'update INTO gest_adm_alicuota set ali_descripcion=$1, ali_costo=$2 where ali_id=$3', [ali_descripcion, ali_costo, ali_id]
-        );
-        // Insertar en gest_adm_pago
-        for (let pago of pagos) {
-            await db.query('update gest_adm_pago set pag_descripcion=$1, pag_costo=$2 where ali_id=$3', [pago.pag_descripcion, pago.pag_costo, ali_id]);
-        }
+        // Paso 1: Obtener el registro correspondiente al pag_id
+        const resPag = await db.query('SELECT ali_id, pag_costo FROM gest_adm_pago WHERE pag_id = $1', [pag_id]);
+        const ali_id = resPag.rows[0].ali_id;
+        const oldPagCosto = resPag.rows[0].pag_costo;
+        const newPagCosto = parseFloat(pag_costo);
 
-        res.status(200).send('Datos insertados correctamente');
+        // Paso 2: Comprobar si el valor de pag_costo ha cambiado
+        if (oldPagCosto !== newPagCosto) {
+            // Paso 3: Obtener los registros de gest_adm_pago con el mismo ali_id
+            const resPag2 = await db.query('SELECT pag_costo FROM gest_adm_pago WHERE ali_id = $1', [ali_id]);
+
+            // Paso 4: Sumar todos los valores de pag_costo obtenidos
+            const totalPagCosto = resPag2.rows.reduce((total, row) => total + parseFloat(row.pag_costo), newPagCosto);
+            const newAliCosto = totalPagCosto.toFixed(2);
+
+            // Paso 5: Actualizar las tres tablas
+            await db.query('UPDATE gest_adm_pago SET pag_costo = $1, pag_descripcion = $2 WHERE pag_id = $3', [newPagCosto, pag_descripcion, pag_id]);
+            await db.query('UPDATE gest_adm_alicuota SET ali_costo = $1 WHERE ali_id = $2', [newAliCosto, ali_id]);
+            await db.query('UPDATE cont_detalle_pago SET total = $1 WHERE ali_id = $2', [newAliCosto, ali_id]);
+            res.status(200).send('Datos insertados correctamente');
+
+        }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al insertar los datos');
+        res.status(500).send('Error al actualizar los datos');
     }
-};
+}
 
 
 const getPagoByaliID = async(req, res) => {
@@ -150,9 +162,9 @@ module.exports = {
     getAllAlicuota,
     getByCuota,
     createCuota,
-    updateCuota,
     deleteCuota,
     getAllDetallePago,
     createDetallePago,
-    getPagoByaliID
+    getPagoByaliID,
+    updatePago
 }

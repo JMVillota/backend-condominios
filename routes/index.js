@@ -175,7 +175,8 @@ const {
     getAllCuota,
     getAllDetallePago,
     createDetallePago,
-    getPagoByaliID
+    getPagoByaliID,
+    updatePago
 } = require("../controllers/pago");
 
 // Tipo Servicio CRUD
@@ -306,3 +307,4 @@ router.get('/cuota', getAllCuota)
 router.get('/detalle_pago', getAllDetallePago)
 router.post('/detalle_pago', createDetallePago)
 router.get('/pagos/:ali_id', getPagoByaliID)
+router.put('/pago/:pag_id', updatePago)
