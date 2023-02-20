@@ -1,6 +1,6 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
-const pdfMake = require('pdfmake');
+const { pdfMake } = require('pdfmake');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
