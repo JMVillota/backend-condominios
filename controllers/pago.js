@@ -250,7 +250,8 @@ const deletePago = async(req, res) => {
 };
 
 const createPagoByID = async(req, res) => {
-    const { ali_id, pagos } = req.body;
+    const ali_id = req.params.ali_id;
+    const { pagos } = req.body;
 
     const values = pagos.map(pago => [pago.pag_descripcion, pago.pag_costo, ali_id]);
 
