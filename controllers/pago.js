@@ -213,8 +213,7 @@ const deleteAliCuota = (req, res) => {
 
 const deletePago = async(req, res) => {
     const pag_id = req.params.pag_id;
-    const { ali_id } = req.body;
-
+    const ali_id = req.params.ali_id;
 
     try {
         await db.query('BEGIN'); // Iniciar una transacción
