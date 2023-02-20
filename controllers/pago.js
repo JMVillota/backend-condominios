@@ -277,8 +277,6 @@ const createPagoByID = async(req, res) => {
     } catch (error) {
         await db.query('ROLLBACK');
         res.status(500).json({ error: error.message });
-    } finally {
-        db.release();
     }
 };
 
