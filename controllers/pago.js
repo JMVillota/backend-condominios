@@ -293,46 +293,51 @@ const updateEstado = async(req, res) => {
     const dpag_id = req.params.dpag_id;
     const res_correo = req.params.res_correo;
 
-    const updateQuery = 'UPDATE cont_detalle_pago SET dpag_estado = $1 WHERE dpag_id = $2';
-    const updateValues = [true, dpag_id];
-    await db.query(updateQuery, updateValues);
+    try {
+        const updateQuery = 'UPDATE cont_detalle_pago SET dpag_estado = $1 WHERE dpag_id = $2';
+        const updateValues = [true, dpag_id];
+        await db.query(updateQuery, updateValues);
 
-    // Luego, generamos el PDF y lo guardamos en una variable
-    const doc = new PDFDocument();
-    doc.text('Comprobante de pago');
-    const pdfBuffer = await new Promise((resolve) => {
-        let buffers = [];
-        doc.on('data', buffers.push.bind(buffers));
-        doc.on('end', () => {
-            resolve(Buffer.concat(buffers));
+        // Luego, generamos el PDF y lo guardamos en una variable
+        const doc = new PDFDocument();
+        doc.text('Comprobante de pago');
+        const pdfBuffer = await new Promise((resolve) => {
+            let buffers = [];
+            doc.on('data', buffers.push.bind(buffers));
+            doc.on('end', () => {
+                resolve(Buffer.concat(buffers));
+            });
+            doc.end();
         });
-        doc.end();
-    });
 
-    // Finalmente, enviamos el correo electrónico con el PDF como adjunto
-    const transporter = nodemailer.createTransport({
-        // Configura los detalles del servidor de correo que quieras usar
-        host: process.env.HOST,
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.USER,
-            pass: process.env.PASS,
-        },
-    });
-    const mailOptions = {
-        from: process.env.USER,
-        to: res_correo,
-        subject: 'Comprobante de pago',
-        text: 'Adjuntamos el comprobante de pago solicitado.',
-        attachments: [{
-            filename: 'comprobante_de_pago.pdf',
-            content: pdfBuffer,
-            contentType: 'application/pdf',
-        }, ],
-    };
-    await transporter.sendMail(mailOptions);
-
+        // Finalmente, enviamos el correo electrónico con el PDF como adjunto
+        const transporter = nodemailer.createTransport({
+            // Configura los detalles del servidor de correo que quieras usar
+            host: process.env.HOST,
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.USER,
+                pass: process.env.PASS,
+            },
+        });
+        const mailOptions = {
+            from: process.env.USER,
+            to: res_correo,
+            subject: 'Comprobante de pago',
+            text: '¡Hola! Te confirmamos que el pago con ID ${dpag_id} se ha realizado con éxito.',
+            attachments: [{
+                filename: 'comprobante_de_pago.pdf',
+                content: pdfBuffer,
+                contentType: 'application/pdf',
+            }, ],
+        };
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ message: 'Correo Enviado' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Hubo un error al enviar el correo');
+    }
 };
 
 module.exports = {
