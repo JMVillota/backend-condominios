@@ -306,15 +306,18 @@ router.put("/contacto/:id", updateContacto)
 router.delete('/contacto/:id', deleteContacto)
 
 //Pagos APIS
+//cuotas
 router.post('/cuota', createCuota)
 router.get('/cuota', getAllCuota)
 router.get('/alicuota', getAllAlicuota)
 router.put('/alicuota/:ali_id', updateAlicuota)
 router.delete('/alicuota/:ali_id', deleteAliCuota)
+    //detalle pago
 router.get('/detalle_pago', getAllDetallePago)
 router.post('/detalle_pago', createDetallePago)
+router.put('/detalle_pago/:dpag_id/:res_correo', updateEstado)
+    //pagos
 router.get('/pagos/:ali_id', getPagoByaliID)
 router.put('/pago/:pag_id', updatePago)
 router.delete('/pago/:pag_id/:ali_id', deletePago)
 router.post('/pago_id/:ali_id', createPagoByID)
-router.put('/detalle_pago/:dpag_id/:res_correo', updateEstado)
