@@ -2,6 +2,7 @@ const { response } = require("express")
 const { db } = require("../Conexiones/slq")
 const pdfMake = require('pdfmake');
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const getAllCuota = (request, response) => {
 
@@ -322,16 +323,16 @@ const updateEstado = async(req, res) => {
 
         // Enviamos el correo electrónico con el archivo PDF adjunto utilizando nodemailer
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
+            host: process.env.HOST,
             port: 587,
             secure: false,
             auth: {
-                user: 'jardindelirios.con@gmail.com',
-                pass: 'wcrfmnahhldstvvd',
+                user: process.env.USER,
+                pass: process.env.PASS,
             },
         });
         const mailOptions = {
-            from: 'jardindelirios.con@gmail.com',
+            from: process.env.USER,
             to: res_correo,
             subject: 'Comprobante de pago',
             text: 'Aquí va el texto del correo electrónico',
