@@ -1,6 +1,5 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
-const { pdfMake } = require('pdfmake');
 const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 
@@ -325,7 +324,7 @@ const updateEstado = async(req, res) => {
             from: process.env.USER,
             to: res_correo,
             subject: 'Comprobante de pago',
-            text: '¡Hola! Te confirmamos que el pago con ID ${dpag_id} se ha realizado con éxito.',
+            text: '¡Hola! Te confirmamos que el pago se ha realizado con éxito.',
             attachments: [{
                 filename: 'comprobante_de_pago.pdf',
                 content: pdfBuffer,
