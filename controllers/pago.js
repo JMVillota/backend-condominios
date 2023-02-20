@@ -261,19 +261,17 @@ const createPagoByID = async(req, res) => {
 
     const updateQuery2 = 'UPDATE cont_detalle_pago SET total = (SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1) WHERE ali_id = $1';
 
-    const client = await pool.connect();
-
     try {
-        await client.query('BEGIN');
+        await db.query('BEGIN');
 
-        const { rows } = await client.query(insertQuery, values);
+        const { rows } = await db.query(insertQuery, values);
 
         const pagosIds = rows.map(row => row.pag_id);
 
-        await client.query(updateQuery1, [ali_id]);
-        await client.query(updateQuery2, [ali_id]);
+        await db.query(updateQuery1, [ali_id]);
+        await db.query(updateQuery2, [ali_id]);
 
-        await client.query('COMMIT');
+        await db.query('COMMIT');
 
         res.status(201).json(pagosIds);
     } catch (error) {
