@@ -275,10 +275,10 @@ const createPagoByID = async(req, res) => {
 
         res.status(201).json(pagosIds);
     } catch (error) {
-        await client.query('ROLLBACK');
+        await db.query('ROLLBACK');
         res.status(500).json({ error: error.message });
     } finally {
-        client.release();
+        db.release();
     }
 };
 
