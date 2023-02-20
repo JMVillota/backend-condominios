@@ -1,5 +1,7 @@
 const { response } = require("express")
 const { db } = require("../Conexiones/slq")
+const pdfMake = require('pdfmake');
+const nodemailer = require('nodemailer');
 
 const getAllCuota = (request, response) => {
 
@@ -284,6 +286,70 @@ const createPagoByID = async(req, res) => {
     }
 };
 
+const express = require('express');
+const router = express.Router();
+
+const updateEstado = async(req, res) => {
+    const dpag_id = req.params.dpag_id;
+    const res_correo = req.params.res_correo;
+
+    const query = {
+        text: 'UPDATE cont_detalle_pago SET dpag_estado = true WHERE dpag_id = $1',
+        values: [dpag_id],
+    };
+
+    try {
+        await db.query(query);
+
+        // Creamos el archivo PDF del comprobante de pago utilizando pdfmake
+        const docDefinition = {
+            content: [
+                { text: 'Comprobante de pago', style: 'header' },
+                { text: `Detalle de pago con ID ${dpag_id}`, style: 'subheader' },
+                { text: 'Aquí puede colocar los detalles de su comprobante de pago.' },
+            ],
+            styles: {
+                header: { fontSize: 18, bold: true },
+                subheader: { fontSize: 14, bold: true },
+            },
+        };
+        const pdfDoc = pdfMake.createPdf(docDefinition);
+        const pdfBuffer = await new Promise((resolve, reject) => {
+            pdfDoc.getBuffer((buffer) => {
+                resolve(buffer);
+            });
+        });
+
+        // Enviamos el correo electrónico con el archivo PDF adjunto utilizando nodemailer
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: 'jardindelirios.con@gmail.com',
+                pass: 'wcrfmnahhldstvvd',
+            },
+        });
+        const mailOptions = {
+            from: 'jardindelirios.con@gmail.com',
+            to: res_correo,
+            subject: 'Comprobante de pago',
+            text: 'Aquí va el texto del correo electrónico',
+            attachments: [{
+                filename: `comprobante_pago_${dpag_id}.pdf`,
+                content: pdfBuffer,
+            }, ],
+        };
+        await transporter.sendMail(mailOptions);
+
+        res.send('El estado del detalle de pago ha sido actualizado y se ha enviado un correo electrónico de comprobante de pago en PDF.');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar el estado del detalle de pago y enviar el correo electrónico de comprobante de pago en PDF.');
+    }
+};
+
 
 module.exports = {
     getAllCuota,
@@ -297,5 +363,6 @@ module.exports = {
     updatePago,
     updateAlicuota,
     deletePago,
-    createPagoByID
+    createPagoByID,
+    updateEstado
 }
