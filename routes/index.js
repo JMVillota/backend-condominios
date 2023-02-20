@@ -177,7 +177,9 @@ const {
     createDetallePago,
     getPagoByaliID,
     updatePago,
-    updateAlicuota
+    updateAlicuota,
+    deleteAliCuota,
+    deletePago
 } = require("../controllers/pago");
 
 // Tipo Servicio CRUD
@@ -303,10 +305,12 @@ router.delete('/contacto/:id', deleteContacto)
 
 //Pagos APIS
 router.post('/cuota', createCuota)
-router.get('/alicuota', getAllAlicuota)
 router.get('/cuota', getAllCuota)
+router.get('/alicuota', getAllAlicuota)
+router.put('/alicuota/:ali_id', updateAlicuota)
+router.delete('/alicuota/:ali_id', deleteAliCuota)
 router.get('/detalle_pago', getAllDetallePago)
 router.post('/detalle_pago', createDetallePago)
 router.get('/pagos/:ali_id', getPagoByaliID)
 router.put('/pago/:pag_id', updatePago)
-router.put('/alicuota/:ali_id', updateAlicuota)
+router.delete('/pago/:pag_id', deletePago)

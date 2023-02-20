@@ -147,7 +147,6 @@ const updateAlicuota = async(req, res) => {
         SET ali_descripcion = $1
         WHERE ali_id = $2
       `;
-
         const values = [ali_descripcion, ali_id];
         const result = await db.query(updateQuery, values);
 
@@ -177,28 +176,90 @@ const getPagoByaliID = async(req, res) => {
 };
 
 
-const deleteCuota = (request, response) => {
+const deleteAliCuota = (req, res) => {
+    const ali_id = req.params.ali_id;
 
-    const cuo_id = request.params.cuo_id;
+    // Eliminar filas relacionadas en la tabla gest_adm_pago
+    // utilizando el ID de la fila en la tabla principal
+    const deletePagosQuery = 'DELETE FROM gest_adm_pago WHERE ali_id = $1';
+    db.query(deletePagosQuery, [ali_id], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error al eliminar los pagos relacionados');
+        } else {
+            // Eliminar filas relacionadas en la tabla cont_detalle_pago
+            // utilizando el ID de la fila en la tabla principal
+            const deleteDetallesQuery = 'DELETE FROM cont_detalle_pago WHERE ali_id = $1';
+            db.query(deleteDetallesQuery, [ali_id], (err, result) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Error al eliminar los detalles de pago relacionados');
+                } else {
+                    // Eliminar la fila en la tabla principal utilizando el ID
+                    const deleteAlicuotaQuery = 'DELETE FROM gest_adm_alicuota WHERE ali_id = $1';
+                    db.query(deleteAlicuotaQuery, [ali_id], (err, result) => {
+                        if (err) {
+                            console.error(err);
+                            res.status(500).send('Error al eliminar la alicuota');
+                        } else {
+                            res.status(200).send(`Se ha eliminado la alicuota con ID ${ali_id}`);
+                        }
+                    });
+                }
+            });
+        }
+    });
+};
 
-    console.log('id' + cuo_id)
+const deletePago = async(req, res) => {
+    const pag_id = req.params.pag_id;
+    const { ali_id } = req.body;
 
-    db.query('delete from gest_adm_pago where cuo_id=$1', [cuo_id], (error, results) => {
-        if (error)
-            throw error
-        response.status(200).send(`Delete id ${cuo_id}`)
-    })
-}
+
+    try {
+        await db.query('BEGIN'); // Iniciar una transacción
+
+        // Actualizar la tabla gest_adm_pago
+        const updateGestAdmPago = await db.query(
+            'DELETE FROM gest_adm_pago WHERE pag_id = $1', [pag_id]
+        );
+        const aliId = ali_id;
+
+        // Realizar la sumatoria de los valores pag_costo que tengan el mismo ali_id y actualizar la tabla gest_adm_alicuota
+        const sumPagCosto = await db.query(
+            'SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1', [aliId]
+        );
+        const aliCosto = sumPagCosto.rows[0].sum;
+        await db.query(
+            'UPDATE gest_adm_alicuota SET ali_costo = $1 WHERE ali_id = $2', [aliCosto, aliId]
+        );
+
+        // Actualizar la tabla cont_detalle_pago
+        await db.query(
+            'UPDATE cont_detalle_pago SET total = $1 WHERE ali_id = $2', [aliCosto, aliId]
+        );
+
+        await db.query('COMMIT'); // Confirmar la transacción
+
+        res.status(200).json({ message: 'Tres tablas actualizadas con éxito' });
+    } catch (error) {
+        await db.query('ROLLBACK'); // Deshacer la transacción en caso de error
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar las tres tablas' });
+    }
+
+};
 
 module.exports = {
     getAllCuota,
     getAllAlicuota,
     getByCuota,
     createCuota,
-    deleteCuota,
+    deleteAliCuota,
     getAllDetallePago,
     createDetallePago,
     getPagoByaliID,
     updatePago,
-    updateAlicuota
+    updateAlicuota,
+    deletePago
 }
