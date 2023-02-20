@@ -249,6 +249,41 @@ const deletePago = async(req, res) => {
 
 };
 
+const createPagoByID = async(req, res) => {
+    const { ali_id, pagos } = req.body;
+
+    const values = pagos.map(pago => [pago.pag_descripcion, pago.pag_costo, ali_id]);
+
+    const insertQuery = 'INSERT INTO gest_adm_pago (pag_descripcion, pag_costo, ali_id) VALUES ($1, $2, $3) RETURNING pag_id';
+
+    const updateQuery1 = 'UPDATE gest_adm_alicuta SET ali_costo = (SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1) WHERE ali_id = $1';
+
+    const updateQuery2 = 'UPDATE cont_detalle_pago SET total = (SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1) WHERE ali_id = $1';
+
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const { rows } = await client.query(insertQuery, values);
+
+        const pagosIds = rows.map(row => row.pag_id);
+
+        await client.query(updateQuery1, [ali_id]);
+        await client.query(updateQuery2, [ali_id]);
+
+        await client.query('COMMIT');
+
+        res.status(201).json(pagosIds);
+    } catch (error) {
+        await client.query('ROLLBACK');
+        res.status(500).json({ error: error.message });
+    } finally {
+        client.release();
+    }
+};
+
+
 module.exports = {
     getAllCuota,
     getAllAlicuota,
@@ -260,5 +295,6 @@ module.exports = {
     getPagoByaliID,
     updatePago,
     updateAlicuota,
-    deletePago
+    deletePago,
+    createPagoByID
 }
