@@ -101,34 +101,40 @@ const createCuota = async(req, res) => {
 const updatePago = async(req, res) => {
     const pag_id = req.params.pag_id;
     const { pag_descripcion, pag_costo } = req.body;
+
     try {
-        // Paso 1: Obtener el registro correspondiente al pag_id
-        const resPag = await db.query('SELECT ali_id, pag_costo FROM gest_adm_pago WHERE pag_id = $1', [pag_id]);
-        const ali_id = resPag.rows[0].ali_id;
-        const oldPagCosto = resPag.rows[0].pag_costo;
-        const newPagCosto = parseFloat(pag_costo);
+        await db.query('BEGIN'); // Iniciar una transacción
 
-        // Paso 2: Comprobar si el valor de pag_costo ha cambiado
-        if (oldPagCosto !== newPagCosto) {
-            // Paso 3: Obtener los registros de gest_adm_pago con el mismo ali_id
-            const resPag2 = await db.query('SELECT pag_costo FROM gest_adm_pago WHERE ali_id = $1', [ali_id]);
+        // Actualizar la tabla gest_adm_pago
+        const updateGestAdmPago = await db.query(
+            'UPDATE gest_adm_pago SET pag_descripcion = $1, pag_costo = $2 WHERE pag_id = $3 RETURNING ali_id', [pag_descripcion, pag_costo, pag_id]
+        );
+        const aliId = updateGestAdmPago.rows[0].ali_id;
 
-            // Paso 4: Sumar todos los valores de pag_costo obtenidos
-            const totalPagCosto = resPag2.rows.reduce((total, row) => total + parseFloat(row.pag_costo), newPagCosto);
-            const newAliCosto = totalPagCosto.toFixed(2);
+        // Realizar la sumatoria de los valores pag_costo que tengan el mismo ali_id y actualizar la tabla gest_adm_alicuota
+        const sumPagCosto = await db.query(
+            'SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1', [aliId]
+        );
+        const aliCosto = sumPagCosto.rows[0].sum;
+        await db.query(
+            'UPDATE gest_adm_alicuota SET ali_costo = $1 WHERE ali_id = $2', [aliCosto, aliId]
+        );
 
-            // Paso 5: Actualizar las tres tablas
-            await db.query('UPDATE gest_adm_pago SET pag_costo = $1, pag_descripcion = $2 WHERE pag_id = $3', [newPagCosto, pag_descripcion, pag_id]);
-            await db.query('UPDATE gest_adm_alicuota SET ali_costo = $1 WHERE ali_id = $2', [newAliCosto, ali_id]);
-            await db.query('UPDATE cont_detalle_pago SET total = $1 WHERE ali_id = $2', [newAliCosto, ali_id]);
-            res.status(200).send('Datos insertados correctamente');
+        // Actualizar la tabla cont_detalle_pago
+        await db.query(
+            'UPDATE cont_detalle_pago SET total = $1 WHERE ali_id = $2', [aliCosto, aliId]
+        );
 
-        }
+        await db.query('COMMIT'); // Confirmar la transacción
+
+        res.status(200).json({ message: 'Tres tablas actualizadas con éxito' });
     } catch (error) {
+        await db.query('ROLLBACK'); // Deshacer la transacción en caso de error
         console.error(error);
-        res.status(500).send('Error al actualizar los datos');
+        res.status(500).json({ error: 'Error al actualizar las tres tablas' });
     }
-}
+
+};
 
 
 const getPagoByaliID = async(req, res) => {
