@@ -137,6 +137,33 @@ const updatePago = async(req, res) => {
 };
 
 
+const updateAlicuota = async(req, res) => {
+    const { ali_id } = req.params;
+    const { ali_descripcion } = req.body;
+
+    try {
+        const updateQuery = `
+        UPDATE gest_adm_alicuota
+        SET ali_descripcion = $1
+        WHERE ali_id = $2
+      `;
+
+        const values = [ali_descripcion, ali_id];
+        const result = await db.query(updateQuery, values);
+
+        res.status(200).json({
+            message: 'Alicuota actualizada correctamente',
+            rowsAffected: result.rowCount,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Ocurrió un error al actualizar la alicuota',
+            error: error.message,
+        });
+    }
+};
+
 const getPagoByaliID = async(req, res) => {
     const ali_id = req.params.ali_id;
     try {
@@ -172,5 +199,6 @@ module.exports = {
     getAllDetallePago,
     createDetallePago,
     getPagoByaliID,
-    updatePago
+    updatePago,
+    updateAlicuota
 }
