@@ -250,33 +250,37 @@ const deletePago = async(req, res) => {
 };
 
 const createPagoByID = async(req, res) => {
-    const ali_id = req.params.ali_id;
+    const { ali_id } = req.params;
     const { pagos } = req.body;
 
-    const values = pagos.map(pago => [pago.pag_descripcion, pago.pag_costo, ali_id]);
-
-    const insertQuery = 'INSERT INTO gest_adm_pago (pag_descripcion, pag_costo, ali_id) VALUES ($1, $2, $3) RETURNING pag_id';
-
-    const updateQuery1 = 'UPDATE gest_adm_alicuta SET ali_costo = (SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1) WHERE ali_id = $1';
-
-    const updateQuery2 = 'UPDATE cont_detalle_pago SET total = (SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1) WHERE ali_id = $1';
-
     try {
-        await db.query('BEGIN');
+        // Iterar por cada pago y ejecutar una consulta para insertar en la base de datos
+        for (let i = 0; i < pagos.length; i++) {
+            const { pag_descripcion, pag_costo } = pagos[i];
+            const query = 'INSERT INTO gest_adm_pago (pag_descripcion, pag_costo, ali_id) VALUES ($1, $2, $3)';
+            await db.query(query, [pag_descripcion, pag_costo, ali_id]);
+        }
 
-        const { rows } = await db.query(insertQuery, values);
+        // Realizar la sumatoria de los valores pag_costo que tengan el mismo ali_id y actualizar la tabla gest_adm_alicuota
+        const sumPagCosto = await db.query(
+            'SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1', [ali_id]
+        );
+        const aliCosto = sumPagCosto.rows[0].sum;
+        await db.query(
+            'UPDATE gest_adm_alicuota SET ali_costo = $1 WHERE ali_id = $2', [aliCosto, ali_id]
+        );
 
-        const pagosIds = rows.map(row => row.pag_id);
+        // Actualizar la tabla cont_detalle_pago
+        await db.query(
+            'UPDATE cont_detalle_pago SET total = $1 WHERE ali_id = $2', [aliCosto, ali_id]
+        );
 
-        await db.query(updateQuery1, [ali_id]);
-        await db.query(updateQuery2, [ali_id]);
+        await db.query('COMMIT'); // Confirmar la transacción
 
-        await db.query('COMMIT');
-
-        res.status(201).json(pagosIds);
+        res.status(200).json({ message: 'Pagos Insertados' });
     } catch (error) {
-        await db.query('ROLLBACK');
-        res.status(500).json({ error: error.message });
+        console.error(error);
+        res.status(500).send('Hubo un error al insertar los pagos');
     }
 };
 
