@@ -12,6 +12,7 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser);
 app.use(require('./routes/index'));
+const pdfMake = require('pdfmake');
 
 
 module.exports.handler = serverless(app);
