@@ -223,7 +223,7 @@ router.get('/detealleali/:ali_id', getDetalleAlicuotaByID)
 router.get('/reservicios', getResServicio)
 router.get('/reserviciosS', getSumaResServicio)
 
-// ALQUILEER USUAQIOS
+// ALQUILEER USUAQIOSj
 
 router.post('/alquileru', createAlquilerUsuarios)
 router.post('/alquilerv', createVerificarAlquilerUsuarios)
