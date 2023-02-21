@@ -276,6 +276,7 @@ router.post("/image", upload.single("userImage"), createImg)
 router.put("/image/:id", upload.single("userImage"), updateImg)
 router.delete("/image/:id", deleteImg)
 
+
 //Pagos APIS
 //cuotas
 router.post('/cuota', createCuota)
