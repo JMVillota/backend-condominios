@@ -199,6 +199,7 @@ const deleteAliCuota = (req, res) => {
                     console.error(err);
                     res.status(500).send('Error al eliminar los detalles de pago relacionados');
                 } else {
+                    // Eliminar la fila en la tabla principal utilizando el ID
                     const deleteAlicuotaQuery = 'DELETE FROM gest_adm_alicuota WHERE ali_id = $1';
                     db.query(deleteAlicuotaQuery, [ali_id], (err, result) => {
                         if (err) {
@@ -227,6 +228,7 @@ const deletePago = async(req, res) => {
         );
         const aliId = ali_id;
 
+        // Realizar la sumatoria de los valores pag_costo que tengan el mismo ali_id y actualizar la tabla gest_adm_alicuota
         const sumPagCosto = await db.query(
             'SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1', [aliId]
         );
@@ -235,6 +237,7 @@ const deletePago = async(req, res) => {
             'UPDATE gest_adm_alicuota SET ali_costo = $1 WHERE ali_id = $2', [aliCosto, aliId]
         );
 
+        // Actualizar la tabla cont_detalle_pago
         await db.query(
             'UPDATE cont_detalle_pago SET total = $1 WHERE ali_id = $2', [aliCosto, aliId]
         );
@@ -255,12 +258,14 @@ const createPagoByID = async(req, res) => {
     const { pagos } = req.body;
 
     try {
+        // Iterar por cada pago y ejecutar una consulta para insertar en la base de datos
         for (let i = 0; i < pagos.length; i++) {
             const { pag_descripcion, pag_costo } = pagos[i];
             const query = 'INSERT INTO gest_adm_pago (pag_descripcion, pag_costo, ali_id) VALUES ($1, $2, $3)';
             await db.query(query, [pag_descripcion, pag_costo, ali_id]);
         }
 
+        // Realizar la sumatoria de los valores pag_costo que tengan el mismo ali_id y actualizar la tabla gest_adm_alicuota
         const sumPagCosto = await db.query(
             'SELECT SUM(pag_costo) FROM gest_adm_pago WHERE ali_id = $1', [ali_id]
         );
@@ -292,6 +297,7 @@ const updateEstado = async(req, res) => {
         const updateValues = [true, dpag_id];
         await db.query(updateQuery, updateValues);
 
+        // Luego, generamos el PDF y lo guardamos en una variable
         const doc = new PDFDocument();
         doc.text('Comprobante de pago');
         const pdfBuffer = await new Promise((resolve) => {
@@ -303,7 +309,9 @@ const updateEstado = async(req, res) => {
             doc.end();
         });
 
+        // Finalmente, enviamos el correo electrónico con el PDF como adjunto
         const transporter = nodemailer.createTransport({
+            // Configura los detalles del servidor de correo que quieras usar
             host: process.env.HOST,
             port: 465,
             secure: true,
