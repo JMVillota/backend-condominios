@@ -62,14 +62,6 @@ const {
     deleteBien
 } = require('../controllers/bien')
 
-// Controlador Cuotas
-// const {
-//     getAllCuota,
-//     getByCuota,
-//     createCuota,
-//     updateCuota,
-//     deleteCuota
-// } = require("../controllers/cuota");
 
 // Controlador Departamento
 const {
@@ -160,15 +152,7 @@ const {
     deleteReporte
 } = require("../controllers/reporte");
 
-
-const {
-    createContacto,
-    getAllContacto,
-    getContactoById,
-    updateContacto,
-    deleteContacto
-} = require("../controllers/contacto");
-
+//Controlador Pagos
 const {
     createCuota,
     getAllAlicuota,
@@ -220,12 +204,6 @@ router.get('/bienes/bien_id/:bien_id', getBienById)
 router.put("/bienes/:bien_id", updateBien)
 router.delete('/bienes/:bien_id', deleteBien)
 
-// Cuota CRUD
-// router.get('/cuota', getAllCuota)
-// router.get('/cuota/:cuo_id', getByCuota)
-// router.post('/cuota', createCuota)
-// router.put("/cuota/:cuo_id", updateCuota)
-// router.delete('/cuota/:cuo_id', deleteCuota)
 
 
 // Departamento CRUD
@@ -259,7 +237,7 @@ router.delete('/Persona/:per_id', deletePersona)
 // Residente CRUD
 router.post('/Residente', createResidente)
 router.get('/Residente/:per_id', getResidente)
-router.get('/Residente', getAllResidente)
+router.get('/Residente', checkAuth, checkRoleAuth(['Presidente']), getAllResidente)
 router.delete('/Residente/:res_id', deleteResidente)
 router.put('/Residente/:per_id', updateResidente)
 
@@ -298,13 +276,6 @@ router.post("/image", upload.single("userImage"), createImg)
 router.put("/image/:id", upload.single("userImage"), updateImg)
 router.delete("/image/:id", deleteImg)
 
-//Reporte CRUD
-router.get('/contacto', getAllContacto)
-router.get('/contacto/:id', getContactoById)
-router.post('/contacto', createContacto)
-router.put("/contacto/:id", updateContacto)
-router.delete('/contacto/:id', deleteContacto)
-
 //Pagos APIS
 //cuotas
 router.post('/cuota', createCuota)
@@ -312,11 +283,11 @@ router.get('/cuota', getAllCuota)
 router.get('/alicuota', getAllAlicuota)
 router.put('/alicuota/:ali_id', updateAlicuota)
 router.delete('/alicuota/:ali_id', deleteAliCuota)
-    //detalle pago
+    // detalle pago
 router.get('/detalle_pago', getAllDetallePago)
 router.post('/detalle_pago', createDetallePago)
 router.put('/detalle_pago/:dpag_id/:res_correo', updateEstado)
-    //pagos
+    // pagos
 router.get('/pagos/:ali_id', getPagoByaliID)
 router.put('/pago/:pag_id', updatePago)
 router.delete('/pago/:pag_id/:ali_id', deletePago)
