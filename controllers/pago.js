@@ -23,40 +23,58 @@ const getAllDetallePago = (request, response) => {
     })
 }
 
-const createDetallePago = (req, res) => {
-    const dpag_fecha = req.body.dpag_fecha;
-    const res_id = req.body.res_id;
-    const ali_id = req.body.ali_id;
+// const createDetallePago = (req, res) => {
+//     const dpag_fecha = req.body.dpag_fecha;
+//     const res_id = req.body.res_id;
+//     const ali_id = req.body.ali_id;
 
-    // Consulta para obtener el ali_costo de la tabla relacionada
-    const query = {
-        text: 'SELECT ali_costo FROM gest_adm_alicuota WHERE ali_id = $1',
-        values: [ali_id],
-    };
+//     // Consulta para obtener el ali_costo de la tabla relacionada
+//     const query = {
+//         text: 'SELECT ali_costo FROM gest_adm_alicuota WHERE ali_id = $1',
+//         values: [ali_id],
+//     };
 
-    db.query(query, (err, result) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error al obtener el ali_costo');
-        } else {
-            const ali_costo = result.rows[0].ali_costo;
+//     db.query(query, (err, result) => {
+//         if (err) {
+//             console.error(err);
+//             res.status(500).send('Error al obtener el ali_costo');
+//         } else {
+//             const ali_costo = result.rows[0].ali_costo;
 
-            // Consulta para insertar los datos en la tabla cont_detalle_pago
-            const insertQuery = {
-                text: 'INSERT INTO cont_detalle_pago (dpag_fecha, res_id, ali_id, dpag_estado, total) VALUES ($1, $2, $3, $4, $5)',
-                values: [dpag_fecha, res_id, ali_id, false, ali_costo],
-            };
+//             // Consulta para insertar los datos en la tabla cont_detalle_pago
+//             const insertQuery = {
+//                 text: 'INSERT INTO cont_detalle_pago (dpag_fecha, res_id, ali_id, dpag_estado, total) VALUES ($1, $2, $3, $4, $5)',
+//                 values: [dpag_fecha, res_id, ali_id, false, ali_costo],
+//             };
 
-            db.query(insertQuery, (err, result) => {
-                if (err) {
-                    console.error(err);
-                    res.status(500).send('Error al insertar datos en la tabla cont_detalle_pago');
-                } else {
-                    res.status(200).send('Datos insertados correctamente');
-                }
-            });
-        }
-    });
+//             db.query(insertQuery, (err, result) => {
+//                 if (err) {
+//                     console.error(err);
+//                     res.status(500).send('Error al insertar datos en la tabla cont_detalle_pago');
+//                 } else {
+//                     res.status(200).send('Datos insertados correctamente');
+//                 }
+//             });
+//         }
+//     });
+// };
+
+const createDetallePago = async(req, res) => {
+    const { fecha } = req.body;
+    // Obtener la última alícuota registrada
+    const ultimaAlicuota = await db.query('SELECT ali_costo FROM gest_adm_alicuota ORDER BY ali_id DESC LIMIT 1');
+    const costo = ultimaAlicuota.rows[0].ali_costo;
+    // Obtener los residentes con rol "condómino"
+    const residentes = await db.query('SELECT res_id FROM seg_sis_residente WHERE rol_id IN (SELECT rol_id FROM seg_sis_rol_residente WHERE rol_id = 6)');
+    // Generar un registro de pago para cada residente
+    for (const residente of residentes.rows) {
+        const query = {
+            text: 'INSERT INTO cont_detalle_pago(dpag_fecha, res_id, dpag_estado, ali_id, total) VALUES($1, $2, $3, (SELECT ali_id FROM gest_adm_alicuota ORDER BY ali_id DESC LIMIT 1), $4)',
+            values: [fecha, residente.res_id, false, costo],
+        };
+        await db.query(query);
+    }
+    res.send('Lista de pagos generada');
 };
 
 
