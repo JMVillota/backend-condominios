@@ -39,7 +39,7 @@ const createDetallePago = async(req, res) => {
         };
         await db.query(query);
     }
-    res.send('Lista de pagos generada');
+    res.send(`{"status":"OK", "resp":"Reservación registrado exitosamente"}`)
 };
 
 
