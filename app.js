@@ -12,12 +12,5 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser);
 app.use(require('./routes/index'));
-app.use(require('./routes/auth'));
-app.use(require('./routes/alquiler'));
-app.use(require('./routes/residente'));
-app.use(require('./routes/index'));
-app.use(require('./routes/rolResidente'));
-app.use(require('./routes/usuario_externo'));
-
 
 module.exports.handler = serverless(app);
